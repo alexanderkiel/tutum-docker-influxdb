@@ -38,6 +38,14 @@ if [ "${SSL_SUPPORT}" == "**False**" ]; then
     unset SSL_SUPPORT
 fi
 
+# Add Graphite support
+if [ -n "${GRAPHITE_DB}" ]; then
+    sed -i -r -e "/^\s+\[input_plugins.graphite\]/, /^$/ { s/false/true/; s/# port/port/; s/# database = \"\"/database = \"${GRAPHITE_DB}\"/; s/# udp_enabled/udp_enabled/; }" ${CONFIG_FILE}
+fi
+if [ -n "${GRAPHITE_PORT}" ]; then
+    sed -i -r -e "/^\s+\[input_plugins.graphite\]/, /^$/ { s/2003/${GRAPHITE_PORT}/; }" ${CONFIG_FILE}
+fi
+
 # Add UDP support
 if [ -n "${UDP_DB}" ]; then
     sed -i -r -e "/^\s+\[input_plugins.udp\]/, /^$/ { s/false/true/; s/#//g; s/\"\"/\"${UDP_DB}\"/g; }" ${CONFIG_FILE}
@@ -53,7 +61,7 @@ SUBJECT_STRING="/C=US/ST=NewYork/L=NYC/O=Tutum/CN=*"
 if [ -n "${SSL_SUPPORT}" ]; then
     echo "=> SSL Support enabled, using SSl api ..."
     echo "=> Listening on port 8084(https api), disabling port 8086(http api)"
-    if [ -n "${SSL_CERT}" ]; then 
+    if [ -n "${SSL_CERT}" ]; then
         echo "=> Use user uploaded certificate"
         echo -e "${SSL_CERT}" > ${CERT_PEM}
     else
@@ -86,7 +94,7 @@ if [ -n "${PRE_CREATE_DB}" ]; then
         RET=1
         while [[ RET -ne 0 ]]; do
             echo "=> Waiting for confirmation of InfluxDB service startup ..."
-            sleep 3 
+            sleep 3
             curl -k ${API_URL}/ping 2> /dev/null
             RET=$?
         done
