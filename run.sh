@@ -40,7 +40,7 @@ fi
 
 # Add Graphite support
 if [ -n "${GRAPHITE_DB}" ]; then
-    sed -i -r -e "/^\s+\[input_plugins.graphite\]/, /^$/ { s/false/true/; s/# port/port/; s/# database = \"\"/database = \"${GRAPHITE_DB}\"/; s/# udp_enabled/udp_enabled/; }" ${CONFIG_FILE}
+    sed -i -r -e "/^\s+\[input_plugins.graphite\]/, /^$/ { s/false/true/; s/# port/port/; s/# database = \"\"/database = \"${GRAPHITE_DB}\"/; }" ${CONFIG_FILE}
 fi
 if [ -n "${GRAPHITE_PORT}" ]; then
     sed -i -r -e "/^\s+\[input_plugins.graphite\]/, /^$/ { s/2003/${GRAPHITE_PORT}/; }" ${CONFIG_FILE}
